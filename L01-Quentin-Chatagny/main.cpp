@@ -118,21 +118,71 @@ int main()
 
     Move m;
     m.from = { 0,0 };                                                                         // coordonn�e logique {l,c} du curseur au d�part du jeu
+    
+   /* NOTE 1) done
 
+    m.to = { ? , ? };                                                           // d�terminer la case d'arriv�e du curseur avec la direction de la fl�che demand�e
+
+    // ex: fl�che droite ==>
+
+    m.to.l = m.from.l;                                                      // la ligne n'a pas chang�e
+    m.to.c = m.from.c + 1;                                          // d�placement d'une colonne vers la droite
+    */
+
+    Ak input; 
+    
+    switch(input) {
+    
+    case Ak::left: {
+        m.to.l = m.from.l;
+        m.to.c = m.from.c - 1;
+    } break;
+
+    case Ak::right: {
+        m.to.l = m.from.l;
+        m.to.c = m.from.c + 1;
+    } break;
+   
+    case Ak::up: {
+        m.to.l = m.from.l - 1;
+        m.to.c = m.from.c;
+    } break;
+    
+    case Ak::down: {
+        m.to.l = m.from.l + 1;
+        m.to.c = m.from.c;
+    } break;
+    
+    case Ak::up_left: {
+        m.to.l = m.from.l - 1;
+        m.to.c = m.from.c - 1;
+    } break;
+   
+    case Ak::up_right: {
+        m.to.l = m.from.l - 1;
+        m.to.c = m.from.c + 1;
+    } break;
+   
+    case Ak::down_left: {
+        m.to.l = m.from.l + 1;
+        m.to.c = m.from.c - 1;
+    } break;
+    
+    case Ak::down_right: {
+        m.to.l = m.from.l + 1;
+        m.to.c = m.from.c + 1;
+    } break;
+    
+    default: std::cerr << "Error in Ak enum class value"; 
     /*
-            NOTE 1)
-
-                    m.to = {?,?};                                                           // d�terminer la case d'arriv�e du curseur avec la direction de la fl�che demand�e
-
-                    // ex: fl�che droite ==>
-
-                    m.to.l = m.from.l;                                                      // la ligne n'a pas chang�e
-                    m.to.c = m.from.c + 1;                                          // d�placement d'une colonne vers la droite
-
+            
             NOTE 2)
 
                     if ( damier[m.to.l][m.to.c] == CD )             // pour v�rifier de quelle case il s'agit dans le tableau damier
-                            ...
+    */            
+
+     
+    /*
             NOTE 3)
 
                     Utilisez le calcul �nonc� dans la sp�cification au point 10) pour retrouver la coordonn�e graphique (x,y) d'une case � partir de sa coordonn�e logique (l,c)
