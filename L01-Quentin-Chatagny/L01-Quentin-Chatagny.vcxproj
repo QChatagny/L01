@@ -129,10 +129,9 @@
   <ItemGroup>
     <ClCompile Include="..\..\..\..\CVM\PROG\lab1\cvm 23.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="tests.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="tests.h" />
+    <ClInclude Include="..\..\..\..\CVM\PROG\lab1\cvm 23.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
