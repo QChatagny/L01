@@ -1,7 +1,10 @@
-﻿#include <iostream>
-// vos autres includes ici
-
+﻿// librairies maisons
 #include "C:\Users\quent\CVM\PROG\lab1\cvm 23.h"
+// librairies standard
+#include <iostream>
+// librairies autres 
+#include <conio.h>
+
 
 // PRAGMA
 #pragma warning (disable:6031)          // valeur de retour ignor�e '_getch'
@@ -49,6 +52,15 @@ enum class Arrowkeys                                            // Code ascii d�
 };
 
 using Ak = Arrowkeys;                                           // un alias plus concis
+
+enum class FlowControlInput                                   // Autres input acceptes
+{
+    nullChar = 0,
+    escChar = 224,
+    exit = 27,
+};
+
+using KbIn = FlowControlInput;
 
 // CASES, DAMIER ET TRANSFORMATIONS
 
@@ -110,90 +122,182 @@ char cursor[3][3] =                                                     // infor
         { '\xC8', '\xCA', '\xBC' }
 };
 
+int toursJoues = 0;
+
+    uint8_t dollars = 0;
+void printDamier() {
+	for (int i = 0; i < 8; i++) {
+		for (int j = 0; j < 8; j++) {
+			switch (damier[i][j]) {
+			case CO: {
+				std::cout << "CO ";
+			}break;
+			case CS: {
+				std::cout << "CS ";
+			}break;
+			case CV: {
+				std::cout << ".. ";
+			}break;
+			case CF: {
+				std::cout << "CF ";
+			}break;
+			case CD: {
+				std::cout << "CD ";
+			}break;
+				  
+			}
+		}
+		std::cout << '\n';
+	}
+	std::cout << '\n';
+	std::cout << "dollars: " << dollars << '\n';
+}
 
 int main()
 {
-    setwsize(WIN_Y, WIN_X);                                                         // redimensionner la fen�tre de la console
-    show(true);                                                                                     // afficher (oui/non) le trait d'affichage de la console
+	setwsize(WIN_Y, WIN_X);                                                         // redimensionner la fen�tre de la console
+    show(false);                                                                                     // afficher (oui/non) le trait d'affichage de la console
 
     Move m;
     m.from = { 0,0 };                                                                         // coordonn�e logique {l,c} du curseur au d�part du jeu
-    
-   /* NOTE 1) done
+	uint8_t deplacements = 0;
+    bool running = true; 
+    bool inputValide = true;
+    bool enferme = false;
+    bool gagne = false;
+    uint8_t c;
 
-    m.to = { ? , ? };                                                           // d�terminer la case d'arriv�e du curseur avec la direction de la fl�che demand�e
+    while (running) {
+		c = _getch();
 
-    // ex: fl�che droite ==>
+		if (c == (uint8_t)KbIn::nullChar || c == (uint8_t)KbIn::escChar) {
+			if (_kbhit()) {
+				c = _getch();
 
-    m.to.l = m.from.l;                                                      // la ligne n'a pas chang�e
-    m.to.c = m.from.c + 1;                                          // d�placement d'une colonne vers la droite
-    */
+				// Vérifie les limites extérieures du damier
+				if (m.from.c == 0) {
+					if ((Ak)c == Ak::left || (Ak)c == Ak::up_left || (Ak)c == Ak::down_left) {
+						std::cout << "move invalide\n";
+						inputValide = false;
+					}
+				}
+				if (m.from.l == 0) {
+					if ((Ak)c == Ak::up || (Ak)c == Ak::up_right || (Ak)c == Ak::up_left) {
+						std::cout << "input invalide\n";
+						inputValide = false;
+					}
+				}
+				if (m.from.c == COL - 1) {
+					if ((Ak)c == Ak::right || (Ak)c == Ak::up_right || (Ak)c == Ak::down_right) {
+					std::cout << "input invalide\n";
+					inputValide = false;
+					}
+				}
+				if (m.from.l == LIG - 1) {
+					if ((Ak)c == Ak::down || (Ak)c == Ak::down_left || (Ak)c == Ak::down_right) {
+					std::cout << "input invalide\n";
+					inputValide = false;
+					}
+				}
 
-    Ak input; 
-    
-    switch(input) {
-    
-    case Ak::left: {
-        m.to.l = m.from.l;
-        m.to.c = m.from.c - 1;
-    } break;
+				if (inputValide) {
+					deplacements++;
+					switch ((Ak)c) {
+						case Ak::left :      {m.to.l = m.from.l; m.to.c = m.from.c - 1;} break;
+						case Ak::right:      {m.to.l = m.from.l; m.to.c = m.from.c + 1;} break;
+						case Ak::up:         {m.to.l = m.from.l - 1; m.to.c = m.from.c; } break;
+						case Ak::down:       {m.to.l = m.from.l + 1; m.to.c = m.from.c;} break;
+						case Ak::up_left:    {m.to.l = m.from.l - 1; m.to.c = m.from.c - 1;} break;
+						case Ak::up_right:   {m.to.l = m.from.l - 1; m.to.c = m.from.c + 1;} break;
+						case Ak::down_left:  {m.to.l = m.from.l + 1; m.to.c = m.from.c - 1;} break;
+						case Ak::down_right: {m.to.l = m.from.l + 1; m.to.c = m.from.c + 1;} break;
+						default:             {m.to.l = m.from.l; m.to.c = m.from.c; } break;
 
-    case Ak::right: {
-        m.to.l = m.from.l;
-        m.to.c = m.from.c + 1;
-    } break;
-   
-    case Ak::up: {
-        m.to.l = m.from.l - 1;
-        m.to.c = m.from.c;
-    } break;
-    
-    case Ak::down: {
-        m.to.l = m.from.l + 1;
-        m.to.c = m.from.c;
-    } break;
-    
-    case Ak::up_left: {
-        m.to.l = m.from.l - 1;
-        m.to.c = m.from.c - 1;
-    } break;
-   
-    case Ak::up_right: {
-        m.to.l = m.from.l - 1;
-        m.to.c = m.from.c + 1;
-    } break;
-   
-    case Ak::down_left: {
-        m.to.l = m.from.l + 1;
-        m.to.c = m.from.c - 1;
-    } break;
-    
-    case Ak::down_right: {
-        m.to.l = m.from.l + 1;
-        m.to.c = m.from.c + 1;
-    } break;
-    
-    default: std::cerr << "Error in Ak enum class value"; 
-    /*
-            
-            NOTE 2)
+						std::cout << "nous sommes a: " << m.to.l << " " << m.to.c;
+					}
+					
+					switch (damier[m.to.l][m.to.c]) {
+						case CO:
+						case CS :
+						case CF :{
+							damier[m.to.l][m.to.c] = futur[damier[m.to.l][m.to.c]];
+						}
+							break;
 
-                    if ( damier[m.to.l][m.to.c] == CD )             // pour v�rifier de quelle case il s'agit dans le tableau damier
-    */            
+						case CD: {
+							dollars++;
+							damier[m.to.l][m.to.c] = futur[damier[m.to.l][m.to.c]];
+						}
+							break;
 
-     
-    /*
-            NOTE 3)
+						case CV: {    // la case est vide, le déplacement est annulé
+							m.to.l = m.from.l;
+							m.to.c = m.from.c;
+						}
+							break; 
+					}
+				}
+			}
+		}
+		else {
+			switch ((KbIn)c) {
+			case KbIn::exit: {
+				running = false;
+			} break;
 
-                    Utilisez le calcul �nonc� dans la sp�cification au point 10) pour retrouver la coordonn�e graphique (x,y) d'une case � partir de sa coordonn�e logique (l,c)
+			}
+		}
 
-            NOTE 4)
+		// verifier si on est enferme 
+		/*	for (uint8_t i = m.to.l - 1; i <= m.to.l + 1; i++) {
+				for (uint8_t j = m.to.c - 1; j <= m.to.c + 1; j++) {
+					if (damier[i][j] == CO || damier[i][j] == CS || damier[i][j] == CD) {
+						enferme = false;
+					}
+					else {
+						enferme = true;
+					}
+				}
+			}*/
+		for (int8_t deltaL = -1; deltaL <= 1; deltaL++) {
+			for (int8_t deltaC = -1; deltaC <= 1; deltaC++) {
+				int8_t checkL = m.to.l + deltaL;
+				int8_t checkC = m.to.c + deltaC;
 
-                    m.from = m.to;                                                          // ne pas oublier que l'arriv�e deviendra le d�part du d�placement suivant
+				if (checkL < 0 || checkC < 0 || checkL >= LIG || checkC >=COL || (checkL == m.to.l && checkC == m.to.c)) { // elimine les valeurs negatives ou supperieures aux limites du damier et la case ou le joueur est situe
 
-    */
+				}
+				else {
+					if (damier[checkL][checkC] == CO || damier[checkL][checkC] == CS || damier[checkL][checkC] == CD) { // des qu'il y a un case cest assez  
+						enferme = false;
+						break;
+					} else {
+						enferme = true;
+					}
+				}
+			}
+		}
+		printDamier();
 
-
-    // Continuez ici...
-
+		if (dollars == 12) {
+			running = false;
+			gagne = true;
+			break;
+		} else if (enferme == true) {
+			running = false;
+			break;
+		}
+		m.from = m.to;
+	
+		/*
+				NOTE 3)
+						Utilisez le calcul �nonc� dans la sp�cification au point 10) pour retrouver la coordonn�e graphique (x,y) d'une case � partir de sa coordonn�e logique (l,c)
+		*/
+	    } 
+	if (gagne) {
+		std::cout << "Wow felicitation";
+	}
+	else {
+		std::cout << "Perdu!";
+	}
 }
