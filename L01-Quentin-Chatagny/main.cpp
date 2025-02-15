@@ -37,6 +37,10 @@ const size_t DELTA_Y = CASE_Y + SPACE_Y;                                 // saut
 const size_t WIN_X = 2 * START_X + (COL - 1) * DELTA_X + CASE_X;         // nombres de colonnes pour l'affichage d'une case
 const size_t WIN_Y = 2 * START_Y + (LIG - 1) * DELTA_Y + CASE_Y;         // nombres de lignes   pour l'affichage d'une case
 
+// CONFIGURATION DU JEU
+
+const uint8_t DOLLARS_TOTAUX = 15;
+
 // COMMANDES
 
 enum class Arrowkeys                                                     // Code ascii d�cimal des touches fl�ch�es du clavier
@@ -150,7 +154,7 @@ void printDamier() {                                                     // pour
 		std::cout << '\n';
 	}
 	std::cout << '\n';
-	std::cout << "dollars: " << dollars << '\n';
+	std::cout << "dollars: " << (int)dollars << '\n';
 }
 
 
@@ -184,7 +188,6 @@ int main()
 		if (c == (uint8_t)KbIn::null_char || c == (uint8_t)KbIn::esc_char) {
 			if (_kbhit()) {
 				c = _getch();
-
 																	     // Vérifie les limites extérieures du damier et empeche, le cas echeant, dacceder au damier
 				if (m.from.c == 0) {
 					if ((Ak)c == Ak::left || (Ak)c == Ak::up_left || (Ak)c == Ak::down_left) {
@@ -226,25 +229,23 @@ int main()
 				}
 				if (inputValide && inBounds) { 	                         // ce que l'on fait avec chaque type de case darrivee		
 					switch (damier[m.to.l][m.to.c]) {
-					case CO:
-					case CS:
-					case CF: {
-						damier[m.to.l][m.to.c] = futur[damier[m.to.l][m.to.c]];
-						deplacements++;
-					}
-						   break;
+						case CO: case CS: case CF: {
+							damier[m.to.l][m.to.c] = futur[damier[m.to.l][m.to.c]];
+							deplacements++;
+						}
+							   break;
 
-					case CD: {
-						damier[m.to.l][m.to.c] = futur[damier[m.to.l][m.to.c]];
-						dollars++;
-						deplacements++;
-					}
-						   break;
+						case CD: {
+							damier[m.to.l][m.to.c] = futur[damier[m.to.l][m.to.c]];
+							dollars++;
+							deplacements++;
+						}
+							   break;
 
-					case CV: {                                       // la case est vide, le déplacement est annulé
-						m.to.l = m.from.l;
-						m.to.c = m.from.c;
-					}
+						case CV: {                                       // la case est vide, le déplacement est annulé
+							m.to.l = m.from.l;
+							m.to.c = m.from.c;
+						}
 						   break;
 					}
 
@@ -257,7 +258,7 @@ int main()
 								// aux limites du damier et la case ou le joueur est situe
 							}
 							else {
-								if (damier[checkL][checkC] == CO || damier[checkL][checkC] == CS || damier[checkL][checkC] == CD) {
+								if (damier[checkL][checkC] == CO || damier[checkL][checkC] == CS || damier[checkL][checkC] == CD || damier[checkL][checkC] == CF ){
 									enferme = false;
 									break;                                                                                              // des qu'il y a une case active cest assez 
 								}
@@ -267,7 +268,7 @@ int main()
 							}
 						}
 					}
-					m.to = m.from;
+					m.from = m.to;
 				}
 			}
 		}
@@ -282,9 +283,9 @@ int main()
 			}
 		}
 
-		 printDamier();
+		printDamier();
 
-		if (dollars == 12) {
+		if (dollars == DOLLARS_TOTAUX) {
 			running = false;
 			gagne = true;
 			break;
@@ -292,7 +293,6 @@ int main()
 			running = false;
 			break;
 		}
-	
 		/*
 				NOTE 3)
 						Utilisez le calcul �nonc� dans la sp�cification au point 10) pour retrouver la coordonn�e graphique (x,y) d'une case � partir de sa coordonn�e logique (l,c)
@@ -306,16 +306,6 @@ int main()
 	}
 }
 
-
-
-
-
-
-
-
-
-
-
 // -TODO
 // temps de jeu
 // inclure la verification des limites exterieures dans le switch suivant, evite de multiplier lacces a la memoire
@@ -324,8 +314,9 @@ int main()
 
 
 // -TESTS 
-// out of bounds
-// inputs non acceptes
-// gagner
-// perdre (enferme)
-//
+// out of bounds [x]
+// inputs non acceptes [x] 
+// gagner [x]
+// perdre (enferme) [x]
+// quitter le jeu [x]
+// 
