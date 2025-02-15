@@ -2,6 +2,7 @@
 #include "C:\Users\quent\CVM\PROG\lab1\cvm 23.h"
 // librairies standard
 #include <iostream>
+#include <algorithm>
 // librairies autres 
 #include <conio.h>
 
@@ -132,25 +133,39 @@ int toursJoues = 0;
     uint8_t dollars = 0;
 void printDamier() {                                                     // pour débug
 	for (int i = 0; i < LIG + 1; i++) {
-		for (int j = 0; j < COL + 1; j++) {
-			switch (damier[i+1][j+1]) {
-				case CO: {
-					std::cout << "CO ";
-				}break;
-				case CS: {
-					std::cout << "CS ";
-				}break;
-				case CV: {
-					std::cout << ".. ";
-				}break;
-				case CF: {
-					std::cout << "CF ";
-				}break;
-				case CD: {
-					std::cout << "CD ";
-				}break;
+		for (int j = 0; j <= COL; j++) {
+			if (i == 0) {
+				if (j == 0) { std::cout << "   "; }
+				else {
+					if (j < 10) { std::cout << " " << j << " "; }
+					else { std::cout << j << " "; }
+				}
 			}
-			
+			else {
+				if (j == 0) {
+					if (i == 0) { std::cout << "   "; }
+					else { std::cout << " " << i << " "; }
+				}
+				else {
+					switch (damier[i - 1][ j - 1 ]) {
+					case CO: {
+						std::cout << "CO ";
+					}break;
+					case CS: {
+						std::cout << "CS ";
+					}break;
+					case CV: {
+						std::cout << ".. ";
+					}break;
+					case CF: {
+						std::cout << "CF ";
+					}break;
+					case CD: {
+						std::cout << "CD ";
+					}break;
+					}
+				}
+			}
 		}
 		std::cout << '\n';
 	}
@@ -158,12 +173,27 @@ void printDamier() {                                                     // pour
 	std::cout << "dollars: " << (int)dollars << '\n';
 }
 
+void debugMode(Move move) {
+	size_t inputX = 0, inputY = 18;
+	gotoxy(0, 12);
+	char ce;
+	do {
+		std::cout << "Debug mode:\n 1) auto win (dol == 15)\n 2) change player position\n 3) select predefined position\n\n ";
+		ce = _getch();
+		switch (ce) {
+		case '1': dollars = 15;
+			break;
+		case '2': {
+			gotoxy(inputX, inputY);
+			int ligne, colonne, bakLigne, bakColonne;
 
-void debugMode() {
-	dollars = 12;
+			std::cin >> ligne >> colonne;
+			bakLigne = move.from.l; bakColonne = move.from.c;
+			move.from.l = ligne; move.from.c = colonne;
+		} break;
+		}
+	} while (1);
 }
-
-
 
 
 int main()
