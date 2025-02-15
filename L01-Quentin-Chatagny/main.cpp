@@ -131,9 +131,9 @@ int toursJoues = 0;
 
     uint8_t dollars = 0;
 void printDamier() {                                                     // pour débug
-	for (int i = 0; i < 8; i++) {
-		for (int j = 0; j < 8; j++) {
-			switch (damier[i][j]) {
+	for (int i = 0; i < LIG + 1; i++) {
+		for (int j = 0; j < COL + 1; j++) {
+			switch (damier[i+1][j+1]) {
 				case CO: {
 					std::cout << "CO ";
 				}break;
@@ -150,6 +150,7 @@ void printDamier() {                                                     // pour
 					std::cout << "CD ";
 				}break;
 			}
+			
 		}
 		std::cout << '\n';
 	}
@@ -187,44 +188,114 @@ int main()
 
 		if (c == (uint8_t)KbIn::null_char || c == (uint8_t)KbIn::esc_char) {
 			if (_kbhit()) {
+
 				c = _getch();
 																	     // Vérifie les limites extérieures du damier et empeche, le cas echeant, dacceder au damier
-				if (m.from.c == 0) {
-					if ((Ak)c == Ak::left || (Ak)c == Ak::up_left || (Ak)c == Ak::down_left) {
-						//std::cout << "move invalide\n";
-						inBounds = false;
-					}
-				}
-				if (m.from.l == 0) {
-					if ((Ak)c == Ak::up || (Ak)c == Ak::up_right || (Ak)c == Ak::up_left) {
-						//std::cout << "input invalide\n";
-						inBounds = false;
-					}
-				}
-				if (m.from.c == COL - 1) {
-					if ((Ak)c == Ak::right || (Ak)c == Ak::up_right || (Ak)c == Ak::down_right) {
-					//std::cout << "input invalide\n";
-					inBounds = false;
-					}
-				}
-				if (m.from.l == LIG - 1) {
-					if ((Ak)c == Ak::down || (Ak)c == Ak::down_left || (Ak)c == Ak::down_right) {
-					//std::cout << "input invalide\n";
-					inBounds = false;
-					}
-				}
+				//if (m.from.c == 0) {
+				//	if ((Ak)c == Ak::left || (Ak)c == Ak::up_left || (Ak)c == Ak::down_left) {
+				//		//std::cout << "move invalide\n";
+				//		inBounds = false;
+				//	}
+				//}
+				//if (m.from.l == 0) {
+				//	if ((Ak)c == Ak::up || (Ak)c == Ak::up_right || (Ak)c == Ak::up_left) {
+				//		//std::cout << "input invalide\n";
+				//		inBounds = false;
+				//	}
+				//}
+				//if (m.from.c == COL - 1) {
+				//	if ((Ak)c == Ak::right || (Ak)c == Ak::up_right || (Ak)c == Ak::down_right) {
+				//	//std::cout << "input invalide\n";
+				//	inBounds = false;
+				//	}
+				//}
+				//if (m.from.l == LIG - 1) {
+				//	if ((Ak)c == Ak::down || (Ak)c == Ak::down_left || (Ak)c == Ak::down_right) {
+				//	//std::cout << "input invalide\n";
+				//	inBounds = false;
+				//	}
+				//}
+
 
 				if (inBounds) {			                                 // trouve le point d'arrivee du joueur et valide l'imput pour proceder
 					switch ((Ak)c) {
-						case Ak::up: { m.to.l = m.from.l - 1; m.to.c = m.from.c; inputValide = true; } break;
-						case Ak::down: { m.to.l = m.from.l + 1; m.to.c = m.from.c; inputValide = true; } break;
-						case Ak::left: { m.to.l = m.from.l; m.to.c = m.from.c - 1; inputValide = true; } break;
-						case Ak::right: { m.to.l = m.from.l; m.to.c = m.from.c + 1; inputValide = true; } break;
-						case Ak::up_left: { m.to.l = m.from.l - 1; m.to.c = m.from.c - 1; inputValide = true; }	 break;
-						case Ak::up_right: { m.to.l = m.from.l - 1; m.to.c = m.from.c + 1; inputValide = true; } break;
-						case Ak::down_left: { m.to.l = m.from.l + 1; m.to.c = m.from.c - 1; inputValide = true; } break;
-						case Ak::down_right: { m.to.l = m.from.l + 1; m.to.c = m.from.c + 1; inputValide = true; } break;
-						default: { m.to.l = m.from.l; m.to.c = m.from.c; } break;
+
+						case Ak::up: {
+							if (!(m.to.l == 0)) {
+								m.to.l = m.from.l - 1;
+								m.to.c = m.from.c;
+								inputValide = true;
+							}
+							else { inBounds = false; }
+						} break;
+
+						case Ak::down: {
+							if (!(m.to.l == LIG - 1)) {
+								m.to.l = m.from.l + 1;
+								m.to.c = m.from.c;
+								inputValide = true;
+							}
+							else { inBounds = false; }
+						} break;
+
+						case Ak::left: {
+							if (!(m.from.c == 0)) {
+							m.to.l = m.from.l;
+							m.to.c = m.from.c - 1;
+							inputValide = true;
+							}
+							else { inBounds = false; }
+						} break;
+
+						case Ak::right: {
+							if (!(m.from.c == COL - 1)) {
+								m.to.l = m.from.l;
+								m.to.c = m.from.c + 1;
+								inputValide = true;
+							}
+							else { inBounds = false; }
+						} break;
+
+						case Ak::up_left: { 
+							if (!(m.to.l == 0 && m.to.c == 0)) {
+								m.to.l = m.from.l - 1;
+								m.to.c = m.from.c - 1;
+								inputValide = true;
+							}
+							else { inBounds = false; }
+						} break;
+
+						case Ak::up_right: { 
+							if (!(m.to.l == 0 && m.to.c == COL - 1)) {
+								m.to.l = m.from.l - 1;
+								m.to.c = m.from.c + 1;
+								inputValide = true;
+							}
+							else { inBounds = false; }
+						} break;
+
+						case Ak::down_left: {
+							if (!(m.to.l == LIG - 1 && m.to.c == 0)) {
+								m.to.l = m.from.l + 1;
+								m.to.c = m.from.c - 1;
+								inputValide = true;
+							}
+							else { inBounds = false; }
+						} break;
+
+						case Ak::down_right: { 
+							if (!(m.to.l == LIG - 1 && m.to.c == COL - 1)) {
+								m.to.l = m.from.l + 1;
+								m.to.c = m.from.c + 1;
+								inputValide = true;
+							}
+							else { inBounds = false; }
+						} break;
+
+						//default: {
+						//	m.to.l = m.from.l;
+						//	m.to.c = m.from.c;
+						//} break;
 					}
 				}
 				if (inputValide && inBounds) { 	                         // ce que l'on fait avec chaque type de case darrivee		
@@ -300,10 +371,13 @@ int main()
 	    } 
 	if (gagne) {
 		std::cout << "Wow felicitation";
+		return -2;
 	}
 	else {
-		std::cout << "Perdu!";
+		std::cout << "Perdu! a la position"<< m.from.l << " , " << m.from.c;
+		return -1;
 	}
+	return 0;
 }
 
 // -TODO
