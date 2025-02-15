@@ -56,8 +56,9 @@ using Ak = Arrowkeys;                                                    // un a
 enum class FlowControlInput                                              // Autres input acceptes
 {
     nullChar = 0,
-    escChar = 224,
-    exit = 27,
+    escChar  = 224,
+    exit     = 27,
+	d        = 
 };
 
 using KbIn = FlowControlInput;
@@ -176,7 +177,7 @@ int main()
 			if (_kbhit()) {
 				c = _getch();
 
-				// Vérifie les limites extérieures du damier et empeche, le cas echeant, dacceder au damier
+																	     // Vérifie les limites extérieures du damier et empeche, le cas echeant, dacceder au damier
 				if (m.from.c == 0) {
 					if ((Ak)c == Ak::left || (Ak)c == Ak::up_left || (Ak)c == Ak::down_left) {
 						//std::cout << "move invalide\n";
@@ -202,7 +203,7 @@ int main()
 					}
 				}
 
-				if (inBounds) {			// trouve le point d'arrivee du joueur et valide l'imput pour proceder
+				if (inBounds) {			                                 // trouve le point d'arrivee du joueur et valide l'imput pour proceder
 					switch ((Ak)c) {
 						case Ak::up: { m.to.l = m.from.l - 1; m.to.c = m.from.c; inputValide = true; } break;
 						case Ak::down: { m.to.l = m.from.l + 1; m.to.c = m.from.c; inputValide = true; } break;
@@ -215,7 +216,7 @@ int main()
 						default: { m.to.l = m.from.l; m.to.c = m.from.c; } break;
 					}
 				}
-				if (inputValide && inBounds) { 				
+				if (inputValide && inBounds) { 	                         // ce que l'on fait avec chaque type de case darrivee		
 					switch (damier[m.to.l][m.to.c]) {
 						case CO:
 						case CS:
@@ -232,7 +233,7 @@ int main()
 						}
 						break;
 
-						case CV: {   // la case est vide, le déplacement est annulé
+						case CV: {                                       // la case est vide, le déplacement est annulé
 							m.to.l = m.from.l;
 							m.to.c = m.from.c;
 						}
@@ -240,25 +241,25 @@ int main()
 					}
 				}
 
-				for (int8_t deltaL = -1; deltaL <= 1; deltaL++) {
-					for (int8_t deltaC = -1; deltaC <= 1; deltaC++) {
-						int8_t checkL = m.to.l + deltaL;
-						int8_t checkC = m.to.c + deltaC;
+					for (int8_t deltaL = -1; deltaL <= 1; deltaL++) {                                                                   // est-on enffermé
+						for (int8_t deltaC = -1; deltaC <= 1; deltaC++) {
+							int8_t checkL = m.to.l + deltaL;
+							int8_t checkC = m.to.c + deltaC;
 
-						if (checkL < 0 || checkC < 0 || checkL >= LIG || checkC >= COL || (checkL == m.to.l && checkC == m.to.c)) { // elimine les valeurs negatives ou superieures 
-							// aux limites du damier et la case ou le joueur est situe
-						}
-						else {
-							if (damier[checkL][checkC] == CO || damier[checkL][checkC] == CS || damier[checkL][checkC] == CD) {
-								enferme = false;
-								break;                                                                                             // des qu'il y a une case active cest assez 
-							}
+							if (checkL < 0 || checkC < 0 || checkL >= LIG || checkC >= COL || (checkL == m.to.l && checkC == m.to.c)) { // elimine les valeurs negatives ou superieures 
+																																		// aux limites du damier et la case ou le joueur est situe
+							} 
 							else {
-								enferme = true;
+								if (damier[checkL][checkC] == CO || damier[checkL][checkC] == CS || damier[checkL][checkC] == CD) {
+									enferme = false;
+									break;                                                                                              // des qu'il y a une case active cest assez 
+								}
+								else {
+									enferme = true;
+								}
 							}
 						}
 					}
-				}
 
 				if (inputValide && inBounds) {
 					m.to = m.from;
@@ -267,10 +268,12 @@ int main()
 		}
 		else {
 			switch ((KbIn)c) {
-			case KbIn::exit: {
-				running = false;
-			} break;
-
+				case KbIn::exit: {
+					running = false;
+				} break;
+				case KbIn::d :{
+				   debugMode();
+				}
 			}
 		}
 
