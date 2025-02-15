@@ -55,10 +55,10 @@ using Ak = Arrowkeys;                                                    // un a
 
 enum class FlowControlInput                                              // Autres input acceptes
 {
-    nullChar = 0,
-    escChar  = 224,
+    null_char = 0,
+    esc_char  = 224,
     exit     = 27,
-	d        = 
+	d        = 100
 };
 
 using KbIn = FlowControlInput;
@@ -153,6 +153,14 @@ void printDamier() {                                                     // pour
 	std::cout << "dollars: " << dollars << '\n';
 }
 
+
+void debugMode() {
+	dollars = 12;
+}
+
+
+
+
 int main()
 {
 	setwsize(WIN_Y, WIN_X);                                              // redimensionner la fen�tre de la console
@@ -171,9 +179,9 @@ int main()
 
     while (running) {
 		c = _getch();
-		if (_kbhit()) { clrscr(); }
+		clrscr();
 
-		if (c == (uint8_t)KbIn::nullChar || c == (uint8_t)KbIn::escChar) {
+		if (c == (uint8_t)KbIn::null_char || c == (uint8_t)KbIn::esc_char) {
 			if (_kbhit()) {
 				c = _getch();
 
@@ -218,37 +226,36 @@ int main()
 				}
 				if (inputValide && inBounds) { 	                         // ce que l'on fait avec chaque type de case darrivee		
 					switch (damier[m.to.l][m.to.c]) {
-						case CO:
-						case CS:
-						case CF: {
-							damier[m.to.l][m.to.c] = futur[damier[m.to.l][m.to.c]];
-							deplacements++;
-						}
-						break;
-
-						case CD: {
-							damier[m.to.l][m.to.c] = futur[damier[m.to.l][m.to.c]];
-							dollars++;
-							deplacements++;
-						}
-						break;
-
-						case CV: {                                       // la case est vide, le déplacement est annulé
-							m.to.l = m.from.l;
-							m.to.c = m.from.c;
-						}
-						break;
+					case CO:
+					case CS:
+					case CF: {
+						damier[m.to.l][m.to.c] = futur[damier[m.to.l][m.to.c]];
+						deplacements++;
 					}
-				}
+						   break;
+
+					case CD: {
+						damier[m.to.l][m.to.c] = futur[damier[m.to.l][m.to.c]];
+						dollars++;
+						deplacements++;
+					}
+						   break;
+
+					case CV: {                                       // la case est vide, le déplacement est annulé
+						m.to.l = m.from.l;
+						m.to.c = m.from.c;
+					}
+						   break;
+					}
 
 					for (int8_t deltaL = -1; deltaL <= 1; deltaL++) {                                                                   // est-on enffermé
-						for (int8_t deltaC = -1; deltaC <= 1; deltaC++) {
+						for (int8_t deltaC = -1; deltaC <= 1; deltaC++) { // utilise une autre variable temp signée pour eviter l'overflow lors de la verification des cases adjacentes
 							int8_t checkL = m.to.l + deltaL;
 							int8_t checkC = m.to.c + deltaC;
 
 							if (checkL < 0 || checkC < 0 || checkL >= LIG || checkC >= COL || (checkL == m.to.l && checkC == m.to.c)) { // elimine les valeurs negatives ou superieures 
-																																		// aux limites du damier et la case ou le joueur est situe
-							} 
+								// aux limites du damier et la case ou le joueur est situe
+							}
 							else {
 								if (damier[checkL][checkC] == CO || damier[checkL][checkC] == CS || damier[checkL][checkC] == CD) {
 									enferme = false;
@@ -260,8 +267,6 @@ int main()
 							}
 						}
 					}
-
-				if (inputValide && inBounds) {
 					m.to = m.from;
 				}
 			}
@@ -277,7 +282,7 @@ int main()
 			}
 		}
 
-		// printDamier();
+		 printDamier();
 
 		if (dollars == 12) {
 			running = false;
@@ -311,13 +316,14 @@ int main()
 
 
 
-// TODO
-//   temps de jeu
+// -TODO
+// temps de jeu
+// inclure la verification des limites exterieures dans le switch suivant, evite de multiplier lacces a la memoire
 // interface graphique
-// 
+// clean up variables, ranger tout le code, faire ca propre quoi
 
 
-// TESTS 
+// -TESTS 
 // out of bounds
 // inputs non acceptes
 // gagner
