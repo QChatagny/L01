@@ -218,159 +218,125 @@ int main()
 
 		if (c == (uint8_t)KbIn::null_char || c == (uint8_t)KbIn::esc_char) {
 			if (_kbhit()) {
-
 				c = _getch();
-																	     // Vérifie les limites extérieures du damier et empeche, le cas echeant, dacceder au damier
-				//if (m.from.c == 0) {
-				//	if ((Ak)c == Ak::left || (Ak)c == Ak::up_left || (Ak)c == Ak::down_left) {
-				//		//std::cout << "move invalide\n";
-				//		inBounds = false;
-				//	}
-				//}
-				//if (m.from.l == 0) {
-				//	if ((Ak)c == Ak::up || (Ak)c == Ak::up_right || (Ak)c == Ak::up_left) {
-				//		//std::cout << "input invalide\n";
-				//		inBounds = false;
-				//	}
-				//}
-				//if (m.from.c == COL - 1) {
-				//	if ((Ak)c == Ak::right || (Ak)c == Ak::up_right || (Ak)c == Ak::down_right) {
-				//	//std::cout << "input invalide\n";
-				//	inBounds = false;
-				//	}
-				//}
-				//if (m.from.l == LIG - 1) {
-				//	if ((Ak)c == Ak::down || (Ak)c == Ak::down_left || (Ak)c == Ak::down_right) {
-				//	//std::cout << "input invalide\n";
-				//	inBounds = false;
-				//	}
-				//}
+				switch ((Ak)c) {
 
+					case Ak::up: {
+						if (!(m.to.l == 0)) {
+							m.to.l = m.from.l - 1;
+							m.to.c = m.from.c;
+							inputValide = true;
+						}
+						else { inBounds = false; }
+					} break;
 
-				if (inBounds) {			                                 // trouve le point d'arrivee du joueur et valide l'imput pour proceder
-					switch ((Ak)c) {
+					case Ak::down: {
+						if (!(m.to.l == LIG - 1)) {
+							m.to.l = m.from.l + 1;
+							m.to.c = m.from.c;
+							inputValide = true;
+						}
+						else { inBounds = false; }
+					} break;
 
-						case Ak::up: {
-							if (!(m.to.l == 0)) {
-								m.to.l = m.from.l - 1;
-								m.to.c = m.from.c;
-								inputValide = true;
-							}
-							else { inBounds = false; }
-						} break;
+					case Ak::left: {
+						if (!(m.from.c == 0)) {
+						m.to.l = m.from.l;
+						m.to.c = m.from.c - 1;
+						inputValide = true;
+						}
+						else { inBounds = false; }
+					} break;
 
-						case Ak::down: {
-							if (!(m.to.l == LIG - 1)) {
-								m.to.l = m.from.l + 1;
-								m.to.c = m.from.c;
-								inputValide = true;
-							}
-							else { inBounds = false; }
-						} break;
-
-						case Ak::left: {
-							if (!(m.from.c == 0)) {
+					case Ak::right: {
+						if (!(m.from.c == COL - 1)) {
 							m.to.l = m.from.l;
+							m.to.c = m.from.c + 1;
+							inputValide = true;
+						}
+						else { inBounds = false; }
+					} break;
+
+					case Ak::up_left: { 
+						if (!(m.to.l == 0 && m.to.c == 0)) {
+							m.to.l = m.from.l - 1;
 							m.to.c = m.from.c - 1;
 							inputValide = true;
-							}
-							else { inBounds = false; }
-						} break;
+						}
+						else { inBounds = false; }
+					} break;
 
-						case Ak::right: {
-							if (!(m.from.c == COL - 1)) {
-								m.to.l = m.from.l;
-								m.to.c = m.from.c + 1;
-								inputValide = true;
-							}
-							else { inBounds = false; }
-						} break;
+					case Ak::up_right: { 
+						if (!(m.to.l == 0 && m.to.c == COL - 1)) {
+							m.to.l = m.from.l - 1;
+							m.to.c = m.from.c + 1;
+							inputValide = true;
+						}
+						else { inBounds = false; }
+					} break;
 
-						case Ak::up_left: { 
-							if (!(m.to.l == 0 && m.to.c == 0)) {
-								m.to.l = m.from.l - 1;
-								m.to.c = m.from.c - 1;
-								inputValide = true;
-							}
-							else { inBounds = false; }
-						} break;
+					case Ak::down_left: {
+						if (!(m.to.l == LIG - 1 && m.to.c == 0)) {
+							m.to.l = m.from.l + 1;
+							m.to.c = m.from.c - 1;
+							inputValide = true;
+						}
+						else { inBounds = false; }
+					} break;
 
-						case Ak::up_right: { 
-							if (!(m.to.l == 0 && m.to.c == COL - 1)) {
-								m.to.l = m.from.l - 1;
-								m.to.c = m.from.c + 1;
-								inputValide = true;
-							}
-							else { inBounds = false; }
-						} break;
+					case Ak::down_right: { 
+						if (!(m.to.l == LIG - 1 && m.to.c == COL - 1)) {
+							m.to.l = m.from.l + 1;
+							m.to.c = m.from.c + 1;
+							inputValide = true;
+						}
+						else { inBounds = false; }
+					} break;
 
-						case Ak::down_left: {
-							if (!(m.to.l == LIG - 1 && m.to.c == 0)) {
-								m.to.l = m.from.l + 1;
-								m.to.c = m.from.c - 1;
-								inputValide = true;
-							}
-							else { inBounds = false; }
-						} break;
-
-						case Ak::down_right: { 
-							if (!(m.to.l == LIG - 1 && m.to.c == COL - 1)) {
-								m.to.l = m.from.l + 1;
-								m.to.c = m.from.c + 1;
-								inputValide = true;
-							}
-							else { inBounds = false; }
-						} break;
-
-						//default: {
-						//	m.to.l = m.from.l;
-						//	m.to.c = m.from.c;
-						//} break;
-					}
 				}
-				if (inputValide && inBounds) { 	                         // ce que l'on fait avec chaque type de case darrivee		
-					switch (damier[m.to.l][m.to.c]) {
-						case CO: case CS: case CF: {
-							damier[m.to.l][m.to.c] = futur[damier[m.to.l][m.to.c]];
-							deplacements++;
-						}
-							   break;
-
-						case CD: {
-							damier[m.to.l][m.to.c] = futur[damier[m.to.l][m.to.c]];
-							dollars++;
-							deplacements++;
-						}
-							   break;
-
-						case CV: {                                       // la case est vide, le déplacement est annulé
-							m.to.l = m.from.l;
-							m.to.c = m.from.c;
-						}
-						   break;
+			}
+			if (inputValide && inBounds) { 	                         // ce que l'on fait avec chaque type de case darrivee		
+				switch (damier[m.to.l][m.to.c]) {
+					case CO: case CS: case CF: {
+						damier[m.to.l][m.to.c] = futur[damier[m.to.l][m.to.c]];
+						deplacements++;
 					}
+						   break;
 
-					for (int8_t deltaL = -1; deltaL <= 1; deltaL++) {                                                                   // est-on enffermé
-						for (int8_t deltaC = -1; deltaC <= 1; deltaC++) { // utilise une autre variable temp signée pour eviter l'overflow lors de la verification des cases adjacentes
-							int8_t checkL = m.to.l + deltaL;
-							int8_t checkC = m.to.c + deltaC;
+					case CD: {
+						damier[m.to.l][m.to.c] = futur[damier[m.to.l][m.to.c]];
+						dollars++;
+						deplacements++;
+					}
+						   break;
 
-							if (checkL < 0 || checkC < 0 || checkL >= LIG || checkC >= COL || (checkL == m.to.l && checkC == m.to.c)) { // elimine les valeurs negatives ou superieures 
-								// aux limites du damier et la case ou le joueur est situe
+					//case CV: {                                       // la case est vide, le déplacement est annulé
+					//	m.to.l = m.from.l;
+					//	m.to.c = m.from.c;
+					//}
+					//   break;
+				}
+
+				for (int8_t deltaL = -1; deltaL <= 1; deltaL++) {                                                                   // est-on enffermé
+					for (int8_t deltaC = -1; deltaC <= 1; deltaC++) { // utilise une autre variable temp signée pour eviter l'overflow lorsque l'on accede au move
+						int8_t checkL = m.to.l + deltaL;
+						int8_t checkC = m.to.c + deltaC;
+
+						if (checkL < 0 || checkC < 0 || checkL >= LIG || checkC >= COL || (checkL == m.to.l && checkC == m.to.c)) { // elimine les valeurs negatives ou superieures 
+							// aux limites du damier et la case ou le joueur est situe
+						}
+						else {
+							if (damier[checkL][checkC] == CO || damier[checkL][checkC] == CS || damier[checkL][checkC] == CD || damier[checkL][checkC] == CF ){
+								enferme = false;
+								break;                                                                                              // des qu'il y a une case active cest assez 
 							}
 							else {
-								if (damier[checkL][checkC] == CO || damier[checkL][checkC] == CS || damier[checkL][checkC] == CD || damier[checkL][checkC] == CF ){
-									enferme = false;
-									break;                                                                                              // des qu'il y a une case active cest assez 
-								}
-								else {
-									enferme = true;
-								}
+								enferme = true;
 							}
 						}
 					}
-					m.from = m.to;
 				}
+				m.from = m.to;
 			}
 		}
 		else {
@@ -379,7 +345,7 @@ int main()
 					running = false;
 				} break;
 				case KbIn::d :{
-				   debugMode();
+				   debugMode(m);
 				}
 			}
 		}
