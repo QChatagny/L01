@@ -130,11 +130,10 @@ char cursor[3][3] =                                                     // infor
 
 int toursJoues = 0;
 
-    uint8_t dollars = 0;
-void printDamier() {                                                     // pour débug
+void print_debug_damier(uint16_t dollars) {                                                     // pour débug
 	for (int i = 0; i < LIG + 1; i++) {
 		for (int j = 0; j <= COL; j++) {
-			if (i == 0) {
+			if (i == 0) {   // numeros de colonne
 				if (j == 0) { std::cout << "   "; }
 				else {
 					if (j < 10) { std::cout << " " << j << " "; }
@@ -142,7 +141,7 @@ void printDamier() {                                                     // pour
 				}
 			}
 			else {
-				if (j == 0) {
+				if (j == 0) { // numeros de ligne
 					if (i == 0) { std::cout << "   "; }
 					else { std::cout << " " << i << " "; }
 				}
@@ -173,7 +172,7 @@ void printDamier() {                                                     // pour
 	std::cout << "dollars: " << (int)dollars << '\n';
 }
 
-void debugMode(Move move) {
+void debugMode(Move move, uint8_t* dollars) {
 	size_t inputX = 0, inputY = 18;
 	gotoxy(0, 12);
 	char ce;
@@ -181,16 +180,19 @@ void debugMode(Move move) {
 		std::cout << "Debug mode:\n 1) auto win (dol == 15)\n 2) change player position\n 3) select predefined position\n\n ";
 		ce = _getch();
 		switch (ce) {
-		case '1': dollars = 15;
+		case '1': *dollars = 15;
 			break;
 		case '2': {
 			gotoxy(inputX, inputY);
 			int ligne, colonne, bakLigne, bakColonne;
-
 			std::cin >> ligne >> colonne;
 			bakLigne = move.from.l; bakColonne = move.from.c;
 			move.from.l = ligne; move.from.c = colonne;
 		} break;
+		case '3': {
+			gotoxy(inputX, inputY);
+			print_debug_damier(*dollars);
+		}
 		}
 	} while (1);
 }
@@ -204,15 +206,20 @@ int main()
 
     Move m;
     m.from = { 0,0 };                                                    // coordonn�e logique {l,c} du curseur au d�part du jeu
-	uint8_t deplacements = 0;
+
+    uint8_t c;															 // conteneur char de l'input 
+    uint8_t dollars = 0;												 // s'incrémente à mesure qu'on passe sur un case dollars
+	uint8_t deplacements = 0;											 // s'incremente à chaque input valide
+
     bool running = true; 
-    bool inBounds = true;
-	bool inputValide = false;
     bool enferme = false;
     bool gagne = false;
-    uint8_t c;
 
     while (running) {
+
+		bool inBounds = true;
+		bool inputValide = false;
+
 		c = _getch();
 		clrscr();
 
@@ -222,70 +229,63 @@ int main()
 				switch ((Ak)c) {
 
 					case Ak::up: {
-						if (!(m.to.l == 0)) {
+						if (m.to.l > 0) {
 							m.to.l = m.from.l - 1;
 							m.to.c = m.from.c;
 							inputValide = true;
 						}
-						else { inBounds = false; }
 					} break;
 
 					case Ak::down: {
-						if (!(m.to.l == LIG - 1)) {
+						if (m.to.l < LIG - 1) {
 							m.to.l = m.from.l + 1;
 							m.to.c = m.from.c;
 							inputValide = true;
 						}
-						else { inBounds = false; }
 					} break;
 
 					case Ak::left: {
-						if (!(m.from.c == 0)) {
+						if (m.from.c > 0) {
 						m.to.l = m.from.l;
 						m.to.c = m.from.c - 1;
 						inputValide = true;
 						}
-						else { inBounds = false; }
 					} break;
 
 					case Ak::right: {
-						if (!(m.from.c == COL - 1)) {
+						if (m.from.c < COL - 1) {
 							m.to.l = m.from.l;
 							m.to.c = m.from.c + 1;
 							inputValide = true;
 						}
-						else { inBounds = false; }
 					} break;
 
 					case Ak::up_left: { 
-						if (!(m.to.l == 0 && m.to.c == 0)) {
+						if (m.to.l > 0 && m.to.c > 0) {
 							m.to.l = m.from.l - 1;
 							m.to.c = m.from.c - 1;
 							inputValide = true;
 						}
-						else { inBounds = false; }
 					} break;
 
 					case Ak::up_right: { 
-						if (!(m.to.l == 0 && m.to.c == COL - 1)) {
+						if ((m.to.l > 0) && (m.to.c < COL - 1)) {
 							m.to.l = m.from.l - 1;
 							m.to.c = m.from.c + 1;
 							inputValide = true;
 						}
-						else { inBounds = false; }
 					} break;
 
 					case Ak::down_left: {
-						if (!(m.to.l == LIG - 1 && m.to.c == 0)) {
+						if ((m.to.l < LIG - 1) && (m.to.c > 0)) {
 							m.to.l = m.from.l + 1;
 							m.to.c = m.from.c - 1;
 							inputValide = true;
 						}
-						else { inBounds = false; }
 					} break;
 
 					case Ak::down_right: { 
-						if (!(m.to.l == LIG - 1 && m.to.c == COL - 1)) {
+						if (!(m.to.l < LIG - 1 && m.to.c < COL - 1)) {
 							m.to.l = m.from.l + 1;
 							m.to.c = m.from.c + 1;
 							inputValide = true;
@@ -295,7 +295,8 @@ int main()
 
 				}
 			}
-			if (inputValide && inBounds) { 	                         // ce que l'on fait avec chaque type de case darrivee		
+																	 // fonction prendrait un Case damier[][] et un move
+			if (inputValide) {				                         // ce que l'on fait avec chaque type de case darrivee		
 				switch (damier[m.to.l][m.to.c]) {
 					case CO: case CS: case CF: {
 						damier[m.to.l][m.to.c] = futur[damier[m.to.l][m.to.c]];
@@ -310,20 +311,20 @@ int main()
 					}
 						   break;
 
-					//case CV: {                                       // la case est vide, le déplacement est annulé
-					//	m.to.l = m.from.l;
-					//	m.to.c = m.from.c;
-					//}
-					//   break;
+					case CV: {										// la case est vide, le déplacement est annulé
+						m.to.l = m.from.l;
+						m.to.c = m.from.c;
+					}
+					   break;
 				}
-
+																																	// function prendrait un Case damier[][] et un Move
 				for (int8_t deltaL = -1; deltaL <= 1; deltaL++) {                                                                   // est-on enffermé
-					for (int8_t deltaC = -1; deltaC <= 1; deltaC++) { // utilise une autre variable temp signée pour eviter l'overflow lorsque l'on accede au move
+					for (int8_t deltaC = -1; deltaC <= 1; deltaC++) {																// utilise une autre variable temp signée pour eviter l'overflow lorsque l'on accede au move et damier avec une valeur negative
 						int8_t checkL = m.to.l + deltaL;
 						int8_t checkC = m.to.c + deltaC;
 
 						if (checkL < 0 || checkC < 0 || checkL >= LIG || checkC >= COL || (checkL == m.to.l && checkC == m.to.c)) { // elimine les valeurs negatives ou superieures 
-							// aux limites du damier et la case ou le joueur est situe
+																																	// aux limites du damier et la case ou le joueur est situe
 						}
 						else {
 							if (damier[checkL][checkC] == CO || damier[checkL][checkC] == CS || damier[checkL][checkC] == CD || damier[checkL][checkC] == CF ){
@@ -345,13 +346,13 @@ int main()
 					running = false;
 				} break;
 				case KbIn::d :{
-				   debugMode(m);
+				   debugMode(m, &dollars);
 				}
 			}
 		}
 
-		printDamier();
-
+		print_debug_damier(dollars);
+		
 		if (dollars == DOLLARS_TOTAUX) {
 			running = false;
 			gagne = true;
@@ -390,3 +391,9 @@ int main()
 // perdre (enferme) [x]
 // quitter le jeu [x]
 // 
+
+
+
+// conseil debuggage
+
+// 1- toujour garder un breakpoint avant le return du main pour analyser letat des variables sans devoir reproduire le bug
