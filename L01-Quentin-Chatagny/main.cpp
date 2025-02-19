@@ -259,7 +259,6 @@ int main()
 							}
 							else {
 								if (damier[checkL][checkC] == CO || damier[checkL][checkC] == CS || damier[checkL][checkC] == CD || damier[checkL][checkC] == CF ){
-									enferme = false;
 									break;                                                                                              // des qu'il y a une case active cest assez 
 								}
 								else {
