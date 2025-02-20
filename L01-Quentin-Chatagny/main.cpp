@@ -217,7 +217,6 @@ int main()
 
     while (running) {
 
-		bool inBounds = true;
 		bool inputValide = false;
 
 		c = _getch();
@@ -290,12 +289,12 @@ int main()
 							m.to.c = m.from.c + 1;
 							inputValide = true;
 						}
-						else { inBounds = false; }
 					} break;
 
 				}
 			}
 			// fonction prendrait un Case damier[][] et un move
+			// l'acces au damier est circonscrit par inputValide
 			if (inputValide) {				                         // ce que l'on fait avec chaque type de case darrivee		
 				switch (damier[m.to.l][m.to.c]) {
 					case CO: case CS: case CF: {
@@ -314,26 +313,44 @@ int main()
 						m.to.c = m.from.c;
 					} break;
 				}
+
 				// function prendrait un Case damier[][] et un Move
+				int8_t checkL;
+				int8_t checkC;
+				int boundsChecked = 0;
 				for (int8_t deltaL = -1; deltaL <= 1; deltaL++) {                                                                   // est-on enffermé
 					for (int8_t deltaC = -1; deltaC <= 1; deltaC++) {																// utilise une autre variable temp signée pour eviter l'overflow lorsque l'on accede au move et damier avec une valeur negative
-						int8_t checkL = m.to.l + deltaL;
-						int8_t checkC = m.to.c + deltaC;
+						checkL = (int8_t)m.from.l + deltaL;
+						checkC = (int8_t)m.from.c + deltaC;
 
-						if (checkL < 0 || checkC < 0 || checkL >= LIG || checkC >= COL || (checkL == m.to.l && checkC == m.to.c)) { // elimine les valeurs negatives ou superieures 
-																																	// aux limites du damier et la case ou le joueur est situe
+						if (checkL < 0  || checkC < 0 || checkL >= LIG || checkC >= COL || (checkL == m.to.l && checkC == m.to.c)) { // elimine les valeurs negatives ou superieures 
+							// std::cerr << "Wow! reste dont dans le jeux";																// aux limites du damier et la case ou le joueur est situe
+							boundsChecked++;
 						}
 						else {
+							boundsChecked++; 
 							if (damier[checkL][checkC] == CO || damier[checkL][checkC] == CS || damier[checkL][checkC] == CD || damier[checkL][checkC] == CF ){
 								enferme = false;
-								break;                                                                                              // des qu'il y a une case active cest assez 
+								// break;                                                                                              // des qu'il y a une case active cest assez 
 							}
 							else {
 								enferme = true;
+								break;
 							}
 						}
 					}
+					if (!enferme) {
+						break;
+					}
 				}
+				size_t xx = wherex();
+				size_t yy = wherey();
+
+				gotoxy(15, 0);
+				std::cout << boundsChecked << '\n';
+				boundsChecked = 0; 
+				gotoxy(xx, yy);
+
 				m.from = m.to;
 			}
 		}
@@ -359,7 +376,7 @@ int main()
 			break;
 		}
 		/*
-				NOTE 3)
+						NOTE 3)
 						Utilisez le calcul �nonc� dans la sp�cification au point 10) pour retrouver la coordonn�e graphique (x,y) d'une case � partir de sa coordonn�e logique (l,c)
 		*/
 	    } 
