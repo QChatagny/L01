@@ -172,7 +172,7 @@ void print_debug_damier(uint16_t dollars) {                                     
 	std::cout << "dollars: " << (int)dollars << '\n';
 }
 
-void debugMode(Move move, uint8_t* dollars) {
+void debug_mode(Move move, uint8_t* dollars) {
 	size_t inputX = 0, inputY = 18;
 	gotoxy(0, 12);
 	char ce;
@@ -295,29 +295,26 @@ int main()
 
 				}
 			}
-																	 // fonction prendrait un Case damier[][] et un move
+			// fonction prendrait un Case damier[][] et un move
 			if (inputValide) {				                         // ce que l'on fait avec chaque type de case darrivee		
 				switch (damier[m.to.l][m.to.c]) {
 					case CO: case CS: case CF: {
 						damier[m.to.l][m.to.c] = futur[damier[m.to.l][m.to.c]];
 						deplacements++;
-					}
-						   break;
+					} break;
 
 					case CD: {
 						damier[m.to.l][m.to.c] = futur[damier[m.to.l][m.to.c]];
 						dollars++;
 						deplacements++;
-					}
-						   break;
+					} break;
 
 					case CV: {										// la case est vide, le déplacement est annulé
 						m.to.l = m.from.l;
 						m.to.c = m.from.c;
-					}
-					   break;
+					} break;
 				}
-																																	// function prendrait un Case damier[][] et un Move
+				// function prendrait un Case damier[][] et un Move
 				for (int8_t deltaL = -1; deltaL <= 1; deltaL++) {                                                                   // est-on enffermé
 					for (int8_t deltaC = -1; deltaC <= 1; deltaC++) {																// utilise une autre variable temp signée pour eviter l'overflow lorsque l'on accede au move et damier avec une valeur negative
 						int8_t checkL = m.to.l + deltaL;
@@ -346,7 +343,7 @@ int main()
 					running = false;
 				} break;
 				case KbIn::d :{
-				   debugMode(m, &dollars);
+					debug_mode(m, &dollars);
 				}
 			}
 		}
