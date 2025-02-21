@@ -129,6 +129,13 @@ char cursor[3][3] =                                                     // infor
 };
 
 int toursJoues = 0;
+// FONCTION LOGIQUES
+
+
+// FONCTIONS INTERFACE
+
+// FONCTIONS TEST && DEBUG
+
 
 void print_debug_damier(uint16_t dollars) {                                                     // pour débug
 	for (int i = 0; i < LIG + 1; i++) {
@@ -329,13 +336,9 @@ int main()
 						}
 						else {
 							boundsChecked++; 
-							if (damier[checkL][checkC] == CO || damier[checkL][checkC] == CS || damier[checkL][checkC] == CD || damier[checkL][checkC] == CF ){
+							if ((damier[checkL][checkC] == CO) || (damier[checkL][checkC] == CS) || (damier[checkL][checkC] == CD) || (damier[checkL][checkC] == CF) ){
 								enferme = false;
-								// break;                                                                                              // des qu'il y a une case active cest assez 
-							}
-							else {
-								enferme = true;
-								break;
+								break;                                                                                              // des qu'il y a une case active cest assez 
 							}
 						}
 					}
