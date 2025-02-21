@@ -131,6 +131,7 @@ char cursor[3][3] =                                                     // infor
 int toursJoues = 0;
 
 void print_debug_damier(uint16_t dollars) {                                                     // pour débug
+	gotoxy(0, 0);
 	for (int i = 0; i < LIG + 1; i++) {
 		for (int j = 0; j <= COL; j++) {
 			if (i == 0) {   // numeros de colonne
@@ -212,11 +213,11 @@ int main()
 	uint8_t deplacements = 0;											 // s'incremente à chaque input valide
 
     bool running = true; 
-    bool enferme = false;
+    bool enferme = true;
     bool gagne = false;
 
     while (running) {
-
+		running = true;
 		bool inputValide = false;
 
 		c = _getch();
@@ -245,8 +246,8 @@ int main()
 
 					case Ak::left: {
 						if (m.from.c > 0) {
-						m.to.l = m.from.l;
-						m.to.c = m.from.c - 1;
+							m.to.l = m.from.l;
+							m.to.c = m.from.c - 1;
 						inputValide = true;
 						}
 					} break;
@@ -290,9 +291,9 @@ int main()
 							inputValide = true;
 						}
 					} break;
-
 				}
 			}
+
 			// fonction prendrait un Case damier[][] et un move
 			// l'acces au damier est circonscrit par inputValide
 			if (inputValide) {				                         // ce que l'on fait avec chaque type de case darrivee		
@@ -318,45 +319,46 @@ int main()
 				int8_t checkL;
 				int8_t checkC;
 				int boundsChecked = 0;
+
+				gotoxy(0, 15);
 				for (int8_t deltaL = -1; deltaL <= 1; deltaL++) {                                                                   // est-on enffermé
 					for (int8_t deltaC = -1; deltaC <= 1; deltaC++) {																// utilise une autre variable temp signée pour eviter l'overflow lorsque l'on accede au move et damier avec une valeur negative
 						checkL = (int8_t)m.from.l + deltaL;
 						checkC = (int8_t)m.from.c + deltaC;
-
-						if (checkL < 0  || checkC < 0 || checkL >= LIG || checkC >= COL || (checkL == m.to.l && checkC == m.to.c)) { // elimine les valeurs negatives ou superieures 
+						if (checkL < 0 || checkC < 0 || checkL >= LIG || checkC >= COL || (checkL == m.to.l && checkC == m.to.c)) { // elimine les valeurs negatives ou superieures 
 							// std::cerr << "Wow! reste dont dans le jeux";																// aux limites du damier et la case ou le joueur est situe
 							boundsChecked++;
 						}
 						else {
-							boundsChecked++; 
-							if (damier[checkL][checkC] == CO || damier[checkL][checkC] == CS || damier[checkL][checkC] == CD || damier[checkL][checkC] == CF ){
+							boundsChecked++;
+							if (damier[checkL][checkC] == CO || damier[checkL][checkC] == CS || damier[checkL][checkC] == CD || damier[checkL][checkC] == CF) {
 								enferme = false;
-								// break;                                                                                              // des qu'il y a une case active cest assez 
-							}
-							else {
-								enferme = true;
-								break;
+								break;                                                                                              // des qu'il y a une case active cest assez 
 							}
 						}
 					}
+					// std::cout << "checking bound " << (int)deltaL << ',' << (int)deltaC << '\n';
 					if (!enferme) {
 						break;
 					}
 				}
+				enferme = true;
+
 				size_t xx = wherex();
 				size_t yy = wherey();
 
-				gotoxy(15, 0);
+				gotoxy(0, 26);
 				std::cout << boundsChecked << '\n';
 				boundsChecked = 0; 
 				gotoxy(xx, yy);
 
 				m.from = m.to;
+
 			}
 		}
 		else {
 			switch ((KbIn)c) {
-				case KbIn::exit: {
+				case KbIn::exit : {
 					running = false;
 				} break;
 				case KbIn::d :{
@@ -366,20 +368,23 @@ int main()
 		}
 
 		print_debug_damier(dollars);
-		
-		if (dollars == DOLLARS_TOTAUX) {
-			running = false;
-			gagne = true;
-			break;
-		} else if (enferme == true) {
-			running = false;
-			break;
+
+		if (inputValide) {
+			if (dollars == DOLLARS_TOTAUX) {
+				running = false;
+				gagne = true;
+				break;
+			}
+			else if (enferme == true) {
+				running = false;
+				break;
+			}
 		}
 		/*
 						NOTE 3)
 						Utilisez le calcul �nonc� dans la sp�cification au point 10) pour retrouver la coordonn�e graphique (x,y) d'une case � partir de sa coordonn�e logique (l,c)
 		*/
-	    } 
+	} 
 	if (gagne) {
 		std::cout << "Wow felicitation";
 		return -2;
@@ -399,12 +404,12 @@ int main()
 
 
 // -TESTS 
-// out of bounds [x]
-// inputs non acceptes [x] 
-// gagner [x]
-// perdre (enferme) [x]
-// quitter le jeu [x]
-// 
+// out of bounds []
+// inputs non acceptes [] 
+// gagner []
+// perdre (enferme) []
+// quitter le jeu []
+// input sans escape non acceptes []
 
 
 
