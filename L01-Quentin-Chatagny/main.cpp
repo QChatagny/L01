@@ -219,12 +219,13 @@ int main()
 	uint8_t deplacements = 0;											 // s'incremente à chaque input valide
 
     bool running = true; 
-    bool enferme = false;
+    bool enferme = true;
     bool gagne = false;
 
     while (running) {
 
-		bool inputValide = false;
+		bool inputValide = false; // jusqu'a ce quon ai un bon input l'imput est considéré invalide
+		enferme = true;			  // jusqu'a ce quon ai trouvé une case valide on est considéré enfermé
 
 		c = _getch();
 		clrscr();
@@ -235,7 +236,7 @@ int main()
 				switch ((Ak)c) {
 
 					case Ak::up: {
-						if (m.to.l > 0) {
+						if (m.from.l > 0) {
 							m.to.l = m.from.l - 1;
 							m.to.c = m.from.c;
 							inputValide = true;
@@ -243,7 +244,7 @@ int main()
 					} break;
 
 					case Ak::down: {
-						if (m.to.l < LIG - 1) {
+						if (m.from.l < LIG - 1) {
 							m.to.l = m.from.l + 1;
 							m.to.c = m.from.c;
 							inputValide = true;
@@ -267,7 +268,7 @@ int main()
 					} break;
 
 					case Ak::up_left: { 
-						if (m.to.l > 0 && m.to.c > 0) {
+						if (m.from.l > 0 && m.from.c > 0) {
 							m.to.l = m.from.l - 1;
 							m.to.c = m.from.c - 1;
 							inputValide = true;
@@ -275,7 +276,7 @@ int main()
 					} break;
 
 					case Ak::up_right: { 
-						if ((m.to.l > 0) && (m.to.c < COL - 1)) {
+						if ((m.from.l > 0) && (m.from.c < COL - 1)) {
 							m.to.l = m.from.l - 1;
 							m.to.c = m.from.c + 1;
 							inputValide = true;
@@ -283,7 +284,7 @@ int main()
 					} break;
 
 					case Ak::down_left: {
-						if ((m.to.l < LIG - 1) && (m.to.c > 0)) {
+						if ((m.from.l < LIG - 1) && (m.from.c > 0)) {
 							m.to.l = m.from.l + 1;
 							m.to.c = m.from.c - 1;
 							inputValide = true;
@@ -291,7 +292,7 @@ int main()
 					} break;
 
 					case Ak::down_right: { 
-						if (!(m.to.l < LIG - 1 && m.to.c < COL - 1)) {
+						if (!(m.from.l < LIG - 1 && m.from.c < COL - 1)) {
 							m.to.l = m.from.l + 1;
 							m.to.c = m.from.c + 1;
 							inputValide = true;
@@ -322,13 +323,13 @@ int main()
 				}
 
 				// function prendrait un Case damier[][] et un Move
-				int8_t checkL;
-				int8_t checkC;
+				int16_t checkL;
+				int16_t checkC;
 				int boundsChecked = 0;
 				for (int8_t deltaL = -1; deltaL <= 1; deltaL++) {                                                                   // est-on enffermé
 					for (int8_t deltaC = -1; deltaC <= 1; deltaC++) {																// utilise une autre variable temp signée pour eviter l'overflow lorsque l'on accede au move et damier avec une valeur negative
-						checkL = (int8_t)m.from.l + deltaL;
-						checkC = (int8_t)m.from.c + deltaC;
+						checkL = (int16_t)m.to.l + deltaL;
+						checkC = (int16_t)m.to.c + deltaC;
 
 						if (checkL < 0  || checkC < 0 || checkL >= LIG || checkC >= COL || (checkL == m.to.l && checkC == m.to.c)) { // elimine les valeurs negatives ou superieures 
 							// std::cerr << "Wow! reste dont dans le jeux";																// aux limites du damier et la case ou le joueur est situe
@@ -346,15 +347,20 @@ int main()
 						break;
 					}
 				}
-				size_t xx = wherex();
-				size_t yy = wherey();
 
-				gotoxy(15, 0);
-				std::cout << boundsChecked << '\n';
-				boundsChecked = 0; 
-				gotoxy(xx, yy);
+				if (inputValide) {
+					if (dollars == DOLLARS_TOTAUX) {
+						running = false;
+						gagne = true;
+						break;
+					}
+					else if (enferme == true) {
+						running = false;
+						break;
+					}
+					m.from = m.to;
+				}
 
-				m.from = m.to;
 			}
 		}
 		else {
@@ -369,15 +375,6 @@ int main()
 		}
 
 		print_debug_damier(dollars);
-		
-		if (dollars == DOLLARS_TOTAUX) {
-			running = false;
-			gagne = true;
-			break;
-		} else if (enferme == true) {
-			running = false;
-			break;
-		}
 		/*
 						NOTE 3)
 						Utilisez le calcul �nonc� dans la sp�cification au point 10) pour retrouver la coordonn�e graphique (x,y) d'une case � partir de sa coordonn�e logique (l,c)
@@ -388,7 +385,7 @@ int main()
 		return -2;
 	}
 	else {
-		std::cout << "Perdu! a la position"<< m.from.l << " , " << m.from.c;
+		std::cout << "Perdu! a la position"<< m.to.l << " , " << m.to.c;
 		return -1;
 	}
 	return 0;
