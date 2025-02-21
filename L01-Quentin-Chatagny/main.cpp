@@ -128,7 +128,6 @@ char cursor[3][3] =                                                     // infor
         { '\xC8', '\xCA', '\xBC' }
 };
 
-int toursJoues = 0;
 // FONCTION LOGIQUES
 void actualise_damier(Move m, Case damier[LIG][COL], uint16_t& dollars) {
 	switch (damier[m.to.l][m.to.c]) {
