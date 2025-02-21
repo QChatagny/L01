@@ -128,7 +128,9 @@ char cursor[3][3] =                                                     // infor
         { '\xC8', '\xCA', '\xBC' }
 };
 
+////////////////////
 // FONCTION LOGIQUES
+
 void actualise_damier(Move m, Case damier[LIG][COL], uint16_t& dollars) {
 	switch (damier[m.to.l][m.to.c]) {
 	case CO: case CS: case CF: {
@@ -142,9 +144,27 @@ void actualise_damier(Move m, Case damier[LIG][COL], uint16_t& dollars) {
 
 	}
 }
-
+//////////////////////
 // FONCTIONS INTERFACE
 
+void peindre_curseur(XY position) {
+	std::cout << "curseur";
+}
+
+void peindre_damier(Case damier[LIG][COL]) {
+	std::cout << " damier";
+}
+
+void peindre_case(XY position, Case sorte) {
+	std::cout << "damier";
+}
+
+void peindre_move(Move m) {
+	// peindre_case();
+	// peindre_case();
+}
+
+//////////////////////////
 // FONCTIONS TEST && DEBUG
 
 
@@ -190,12 +210,12 @@ void print_debug_damier(uint16_t dollars, Case damier[LIG][COL]) {              
 	std::cout << "dollars: " << (int)dollars << '\n';
 }
 
-void debug_mode(Move move, uint8_t* dollars) {
+void debug_mode(Move move, uint16_t* dollars) {
 	size_t inputX = 0, inputY = 18;
 	gotoxy(0, 12);
 	char ce;
 	do {
-		std::cout << "Debug mode:\n 1) gagner (dol == 15)\n 2) change player position\n 3) select predefined game position\n\n ";
+		std::cout << "mode debug:\n 1) gagner (dol == 15)\n 2) choisir la position du joueur\n 3) importer un etat du damier\n\n ";
 		ce = _getch();
 		switch (ce) {
 		case '1': *dollars = 15;
@@ -214,7 +234,6 @@ void debug_mode(Move move, uint8_t* dollars) {
 		}
 	} while (ce != 'q');
 }
-
 
 int main()
 {
@@ -407,7 +426,7 @@ int main()
 // interface graphique
 
 
-// -TESTS 
+// -TESTS  
 // out of bounds [x]
 // inputs non acceptes [x] 
 // gagner [x]
