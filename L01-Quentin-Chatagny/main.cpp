@@ -406,7 +406,7 @@ int main()
 // quitter le jeu [x]
 // 
 
-
+// yess 
 
 // conseil debuggage
 
