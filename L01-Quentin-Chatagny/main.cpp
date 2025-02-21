@@ -130,14 +130,26 @@ char cursor[3][3] =                                                     // infor
 
 int toursJoues = 0;
 // FONCTION LOGIQUES
+void actualise_damier(Move m, Case damier[LIG][COL], uint16_t& dollars) {
+	switch (damier[m.to.l][m.to.c]) {
+	case CO: case CS: case CF: {
+		damier[m.to.l][m.to.c] = futur[damier[m.to.l][m.to.c]];
+	} break;
 
+	case CD: {
+		damier[m.to.l][m.to.c] = futur[damier[m.to.l][m.to.c]];
+		dollars++;
+	} break;
+
+	}
+}
 
 // FONCTIONS INTERFACE
 
 // FONCTIONS TEST && DEBUG
 
 
-void print_debug_damier(uint16_t dollars) {                                                     // pour débug
+void print_debug_damier(uint16_t dollars, Case damier[LIG][COL]) {                                                     // pour débug
 	for (int i = 0; i < LIG + 1; i++) {
 		for (int j = 0; j <= COL; j++) {
 			if (i == 0) {   // numeros de colonne
@@ -198,7 +210,7 @@ void debug_mode(Move move, uint8_t* dollars) {
 		} break;
 		case '3': {
 			gotoxy(inputX, inputY);
-			print_debug_damier(*dollars);
+			print_debug_damier(*dollars, damier);
 		}
 		}
 	} while (ce != 'q');
@@ -215,8 +227,8 @@ int main()
     m.from = { 0,0 };                                                    // coordonn�e logique {l,c} du curseur au d�part du jeu
 
     uint8_t c;															 // conteneur char de l'input 
-    uint8_t dollars = 0;												 // s'incrémente à mesure qu'on passe sur un case dollars
-	uint8_t deplacements = 0;											 // s'incremente à chaque input valide
+    uint16_t dollars = 0;												 // s'incrémente à mesure qu'on passe sur un case dollars
+	uint16_t deplacements = 0;											 // s'incremente à chaque input valide
 
     bool running = true; 
     bool enferme = true;
@@ -303,6 +315,7 @@ int main()
 			}
 			// fonction prendrait un Case damier[][] et un move
 			// l'acces au damier est circonscrit par inputValide
+
 			if (inputValide) {				                         // ce que l'on fait avec chaque type de case darrivee		
 				switch (damier[m.to.l][m.to.c]) {
 					case CO: case CS: case CF: {
@@ -353,7 +366,7 @@ int main()
 						running = false;
 						gagne = true;
 					}
-					else if (enferme == true) {
+					else if (enferme) {
 						running = false;
 						break;
 					}
@@ -373,7 +386,7 @@ int main()
 			}
 		}
 
-		print_debug_damier(dollars);
+		print_debug_damier(dollars, damier);
 		/*
 						NOTE 3)
 						Utilisez le calcul �nonc� dans la sp�cification au point 10) pour retrouver la coordonn�e graphique (x,y) d'une case � partir de sa coordonn�e logique (l,c)
@@ -392,9 +405,7 @@ int main()
 
 // -TODO
 // temps de jeu
-// inclure la verification des limites exterieures dans le switch suivant, evite de multiplier lacces a la memoire
 // interface graphique
-// clean up variables, ranger tout le code, faire ca propre quoi
 
 
 // -TESTS 
