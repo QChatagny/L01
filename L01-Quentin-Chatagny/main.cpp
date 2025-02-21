@@ -46,13 +46,13 @@ const uint8_t DOLLARS_TOTAUX = 15;
 
 enum class Arrowkeys                                                     // Code ascii d�cimal des touches fl�ch�es du clavier
 {
-    up_left = 71,
-    up = 72,
-    up_right = 73,
-    left = 75,
-    right = 77,
-    down_left = 79,
-    down = 80,
+    up_left    = 71,
+    up         = 72,
+    up_right   = 73,
+    left       = 75,
+    right      = 77,
+    down_left  = 79,
+    down       = 80,
     down_right = 81,
 };
 
@@ -62,8 +62,8 @@ enum class FlowControlInput                                              // Autr
 {
     null_char = 0,
     esc_char  = 224,
-    exit     = 27,
-	d        = 100
+    exit      = 27,
+	debug     = 100
 };
 
 using KbIn = FlowControlInput;
@@ -184,7 +184,7 @@ void debug_mode(Move move, uint8_t* dollars) {
 	gotoxy(0, 12);
 	char ce;
 	do {
-		std::cout << "Debug mode:\n 1) auto win (dol == 15)\n 2) change player position\n 3) select predefined position\n\n ";
+		std::cout << "Debug mode:\n 1) gagner (dol == 15)\n 2) change player position\n 3) select predefined game position\n\n ";
 		ce = _getch();
 		switch (ce) {
 		case '1': *dollars = 15;
@@ -201,7 +201,7 @@ void debug_mode(Move move, uint8_t* dollars) {
 			print_debug_damier(*dollars);
 		}
 		}
-	} while (1);
+	} while (ce != 'q');
 }
 
 
@@ -253,8 +253,8 @@ int main()
 
 					case Ak::left: {
 						if (m.from.c > 0) {
-						m.to.l = m.from.l;
-						m.to.c = m.from.c - 1;
+							m.to.l = m.from.l;
+							m.to.c = m.from.c - 1;
 						inputValide = true;
 						}
 					} break;
@@ -352,7 +352,6 @@ int main()
 					if (dollars == DOLLARS_TOTAUX) {
 						running = false;
 						gagne = true;
-						break;
 					}
 					else if (enferme == true) {
 						running = false;
@@ -368,7 +367,7 @@ int main()
 				case KbIn::exit: {
 					running = false;
 				} break;
-				case KbIn::d :{
+				case KbIn::debug :{
 					debug_mode(m, &dollars);
 				}
 			}
