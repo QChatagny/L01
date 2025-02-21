@@ -133,6 +133,11 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\..\CVM\PROG\lab1\cvm 23.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="doing.txt">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </Text>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
