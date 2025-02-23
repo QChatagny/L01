@@ -131,14 +131,14 @@ char cursor[3][3] =                                                     // infor
 // FONCTION LOGIQUES
 void actualise_damier(Move m, Case damier[LIG][COL], uint16_t& dollars) {
 	switch (damier[m.to.l][m.to.c]) {
-	case CO: case CS: case CF: {
-		damier[m.to.l][m.to.c] = futur[damier[m.to.l][m.to.c]];
-	} break;
-
-	case CD: {
-		damier[m.to.l][m.to.c] = futur[damier[m.to.l][m.to.c]];
+		case CO: case CS: case CF: {
+			damier[m.to.l][m.to.c] = futur[damier[m.to.l][m.to.c]];
+		} break;
+			   
+		case CD: {
+			damier[m.to.l][m.to.c] = futur[damier[m.to.l][m.to.c]];
 		dollars++;
-	} break;
+		} break;
 
 	}
 }
@@ -345,19 +345,15 @@ int main()
 
 						if (checkL < 0  || checkC < 0 || checkL >= LIG || checkC >= COL || (checkL == m.to.l && checkC == m.to.c)) { // elimine les valeurs negatives ou superieures 
 							// std::cerr << "Wow! reste dont dans le jeux";																// aux limites du damier et la case ou le joueur est situe
-							boundsChecked++;
 						}
 						else {
-							boundsChecked++; 
 							if ((damier[checkL][checkC] == CO) || (damier[checkL][checkC] == CS) || (damier[checkL][checkC] == CD) || (damier[checkL][checkC] == CF) ){
 								enferme = false;
 								break;                                                                                              // des qu'il y a une case active cest assez 
 							}
 						}
 					}
-					if (!enferme) {
-						break;
-					}
+					if (!enferme) { break; }
 				}
 
 				if (inputValide) {
