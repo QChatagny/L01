@@ -64,7 +64,7 @@ enum class FlowControlInput                                              // Autr
     null_char = 0,
     esc_char  = 224,
     exit      = 27,
-	debug     = 100
+    debug     = 100
 };
 
 using KbIn = FlowControlInput;
@@ -278,7 +278,7 @@ int main() {
 
     uint8_t c;															 // conteneur char de l'input 
     uint16_t dollars = 0;												 // s'incrémente à mesure qu'on passe sur un case dollars
-	uint16_t deplacements = 0;											 // s'incremente à chaque input valide
+    uint16_t deplacements = 0;											 // s'incremente à chaque input valide
 
     bool running = true; 
     bool enferme = true;
@@ -461,4 +461,5 @@ int main() {
 // peindre un damier 
 
 // Conseil Debuggage
-// 1- toujour garder un breakpoint avant le return du main pour analyser letat des variables sans devoir reproduire le bug
+// 1- toujours garder un breakpoint avant le return du main pour analyser letat des variables sans devoir reproduire le bug
+// 2- placer des breakpoints a la fin de loops pour eviter d'avoir a passer le loop manuellement
