@@ -5,6 +5,7 @@
 #include <algorithm>
 // librairies autres 
 #include <conio.h>
+#include <windows.h>
 
 
 // PRAGMA
@@ -133,35 +134,54 @@ char cursor[3][3] =                                                     // infor
 
 void actualise_damier(Move m, Case damier[LIG][COL], uint16_t& dollars) {
 	switch (damier[m.to.l][m.to.c]) {
-	case CO: case CS: case CF: {
-		damier[m.to.l][m.to.c] = futur[damier[m.to.l][m.to.c]];
-	} break;
+		case CO: case CS: case CF: {
+			damier[m.to.l][m.to.c] = futur[damier[m.to.l][m.to.c]];
+		} break;
 
-	case CD: {
-		damier[m.to.l][m.to.c] = futur[damier[m.to.l][m.to.c]];
-		dollars++;
-	} break;
-
+		case CD: {
+			damier[m.to.l][m.to.c] = futur[damier[m.to.l][m.to.c]];
+			dollars++;
+		} break;
 	}
 }
 //////////////////////
 // FONCTIONS INTERFACE
 
 void peindre_curseur(XY position) {
-	std::cout << "curseur";
-}
-
-void peindre_damier(Case damier[LIG][COL]) {
-	std::cout << " damier";
 }
 
 void peindre_case(XY position, Case sorte) {
-	std::cout << "damier";
+	string ligne(CASE_X, map[sorte].c);			// préfabriquer une string
+	setcolor(map[sorte].color);					// choix de la couleur
+	for (size_t y = 0; y < CASE_Y; ++y) {
+		gotoxy(position.x, position.y++);
+		cout << ligne;
+	}
+	setcolor(Color::wht);						// remettre en blanc
+}
+
+void peindre_case_damier(Case damier[LIG][COL]) {
+	XY position = { START_X, START_Y };
+	for (int i = 0; i < LIG; i++) {
+		for (int j = 0; j < COL; j++) {
+			peindre_case(position, damier[i][j]);
+			position.x += DELTA_X;
+		}
+		position.x = START_X;
+		position.y += DELTA_Y;
+	}
+}
+
+XY lc_to_xy(LC lc) {
+	XY xy = { START_X + (lc.c * DELTA_X) , (START_Y + (lc.l * DELTA_Y)) };
+	return xy;
 }
 
 void peindre_move(Move m) {
-	// peindre_case();
-	// peindre_case();
+	XY from = lc_to_xy(m.from);
+	XY to = lc_to_xy(m.to);
+	peindre_case(from, damier[m.from.l][m.from.c]);
+	peindre_curseur(to);
 }
 
 //////////////////////////
@@ -235,11 +255,23 @@ void debug_mode(Move move, uint16_t* dollars) {
 	} while (ce != 'q');
 }
 
-int main()
-{
+int main() {
+
 	setwsize(WIN_Y, WIN_X);                                              // redimensionner la fen�tre de la console
 	clrscr();
     show(false);                                                         // afficher (oui/non) le trait d'affichage de la console
+
+    //XY a = { 0,0 };
+	//while (1) {
+	//peindre_case(a, CO);
+	//Sleep(500);
+	//peindre_case(a, CF);
+	//Sleep(500);
+	//peindre_case(a, CD);
+	//Sleep(500);
+	//peindre_case(a, CS);
+	//}
+	peindre_case_damier(damier);
 
     Move m;
     m.from = { 0,0 };                                                    // coordonn�e logique {l,c} du curseur au d�part du jeu
@@ -328,7 +360,6 @@ int main()
 							inputValide = true;
 						}
 					} break;
-
 				}
 			}
 			// fonction prendrait un Case damier[][] et un move
@@ -378,19 +409,16 @@ int main()
 						break;
 					}
 				}
-
-				if (inputValide) {
-					if (dollars == DOLLARS_TOTAUX) {
-						running = false;
-						gagne = true;
-					}
-					else if (enferme) {
-						running = false;
-						break;
-					}
-					m.from = m.to;
+				if (dollars == DOLLARS_TOTAUX) {
+					running = false;
+					gagne = true;
 				}
-
+				else if (enferme) {
+					running = false;
+					break;
+				}
+				peindre_move(m);
+				m.from = m.to;
 			}
 		}
 		else {
@@ -403,13 +431,7 @@ int main()
 				}
 			}
 		}
-
-		print_debug_damier(dollars, damier);
-		/*
-						NOTE 3)
-						Utilisez le calcul �nonc� dans la sp�cification au point 10) pour retrouver la coordonn�e graphique (x,y) d'une case � partir de sa coordonn�e logique (l,c)
-		*/
-	    } 
+	} 
 	if (gagne) {
 		std::cout << "Wow felicitation";
 		return -2;
@@ -426,7 +448,7 @@ int main()
 // interface graphique
 
 
-// -TESTS  
+// -TESTS LOGIQUES 
 // out of bounds [x]
 // inputs non acceptes [x] 
 // gagner [x]
@@ -434,8 +456,9 @@ int main()
 // quitter le jeu [x]
 // 
 
-// yess 
+// -TESTS GRAPHIQUES
+// peindre une case, de toutes les sortes de enum Case et des formats (3*6, 3*7, 4*6, 4*7) nombres paires et impairs de cases
+// peindre un damier 
 
-// conseil debuggage
-
+// Conseil Debuggage
 // 1- toujour garder un breakpoint avant le return du main pour analyser letat des variables sans devoir reproduire le bug
