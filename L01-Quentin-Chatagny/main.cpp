@@ -148,6 +148,29 @@ void actualise_damier(Move m, Case damier[LIG][COL], uint16_t& dollars) {
 // FONCTIONS INTERFACE
 
 void peindre_curseur(XY position) {
+	setcolor(Color::yel);					// la fonction setcolor est spécifiée dans cvm 21.h
+	for (size_t y = 0; y < CASE_Y; y++)
+	{
+		gotoxy(position.x, position.y++);
+		for (size_t x = 0; x < CASE_X; ++x) {
+			if (y == 0) {
+				if (x == 0) std::cout << cursor[y][x];
+				if (x < CASE_X - 2) std::cout << cursor[y][1];
+				if (x == CASE_X - 1) std::cout << cursor[y][2];
+			}
+			else if (y < CASE_Y - 1) {
+				if (x == 0) std::cout << cursor[1][0];
+				if (x < CASE_X - 2) std::cout << cursor[1][1];
+				if (x == CASE_X - 1) std::cout << cursor[1][2];
+			}
+			else if (y == CASE_Y - 1) {
+				if (x == 0) std::cout << cursor[2][0];
+				if (x < CASE_X - 2) std::cout << cursor[2][1];
+				if (x == CASE_X - 1) std::cout << cursor[2][2];
+			}
+		}
+	}
+	setcolor(Color::wht);						// remettre en blanc
 }
 
 void peindre_case(XY position, Case sorte) {
@@ -184,6 +207,10 @@ void peindre_move(Move m) {
 	peindre_curseur(to);
 }
 
+void peindre_dollars(uint16_t dollars) {
+	gotoxy(0, 0);
+	std::cout << "nb de dollars: " << dollars;
+}
 //////////////////////////
 // FONCTIONS TEST && DEBUG
 
@@ -259,81 +286,81 @@ int main() {
 
 	setwsize(WIN_Y, WIN_X);                                              // redimensionner la fen�tre de la console
 	clrscr();
-    show(false);                                                         // afficher (oui/non) le trait d'affichage de la console
+	show(false);                                                         // afficher (oui/non) le trait d'affichage de la console
 
-    //XY a = { 0,0 };
-	//while (1) {
-	//peindre_case(a, CO);
-	//Sleep(500);
-	//peindre_case(a, CF);
-	//Sleep(500);
-	//peindre_case(a, CD);
-	//Sleep(500);
-	//peindre_case(a, CS);
-	//}
 	peindre_case_damier(damier);
 
-    Move m;
-    m.from = { 0,0 };                                                    // coordonn�e logique {l,c} du curseur au d�part du jeu
+	Move m;
+	m.from = { 0,0 };                                                    // coordonn�e logique {l,c} du curseur au d�part du jeu
 
-    uint8_t c;															 // conteneur char de l'input 
-    uint16_t dollars = 0;												 // s'incrémente à mesure qu'on passe sur un case dollars
-    uint16_t deplacements = 0;											 // s'incremente à chaque input valide
+	uint8_t c;															 // conteneur char de l'input 
+	uint16_t dollars = 0;												 // s'incrémente à mesure qu'on passe sur un case dollars
+	uint16_t deplacements = 0;											 // s'incremente à chaque input valide
 
-    bool running = true; 
-    bool enferme = true;
-    bool gagne = false;
+	bool running = true;
+	bool enferme = true;
+	bool gagne = false;
 
-    while (running) {
+	while (running) {
 
 		bool inputValide = false; // jusqu'a ce quon ai un bon input l'imput est considéré invalide
 		enferme = true;			  // jusqu'a ce quon ai trouvé une case valide on est considéré enfermé
 
 		c = _getch();
-		clrscr();
+		// clrscr();
 
 		if (c == (uint8_t)KbIn::null_char || c == (uint8_t)KbIn::esc_char) {
 			if (_kbhit()) {
 				c = _getch();
 				switch ((Ak)c) {
 
-					case Ak::up: {
-						if (m.from.l > 0) {
-							m.to.l = m.from.l - 1;
-							m.to.c = m.from.c;
+				case Ak::up: {
+					if (m.from.l > 0) {
+						m.to.l = m.from.l - 1;
+						m.to.c = m.from.c;
+						if (damier[m.to.l][m.to.c] != CV) {
 							inputValide = true;
 						}
-					} break;
+					}
+				} break;
 
-					case Ak::down: {
-						if (m.from.l < LIG - 1) {
-							m.to.l = m.from.l + 1;
-							m.to.c = m.from.c;
+				case Ak::down: {
+					if (m.from.l < LIG - 1) {
+						m.to.l = m.from.l + 1;
+						m.to.c = m.from.c;
+						if (damier[m.to.l][m.to.c] != CV) {
 							inputValide = true;
 						}
-					} break;
+					}
+				} break;
 
-					case Ak::left: {
-						if (m.from.c > 0) {
-							m.to.l = m.from.l;
-							m.to.c = m.from.c - 1;
-						inputValide = true;
-						}
-					} break;
-
-					case Ak::right: {
-						if (m.from.c < COL - 1) {
-							m.to.l = m.from.l;
-							m.to.c = m.from.c + 1;
+				case Ak::left: {
+					if (m.from.c > 0) {
+						m.to.l = m.from.l;
+						m.to.c = m.from.c - 1;
+						if (damier[m.to.l][m.to.c] != CV) {
 							inputValide = true;
 						}
-					} break;
+					}
+				} break;
+
+				case Ak::right: {
+					if (m.from.c < COL - 1) {
+						m.to.l = m.from.l;
+						m.to.c = m.from.c + 1;
+						if (damier[m.to.l][m.to.c] != CV) {
+							inputValide = true;
+						}
+					}
+				} break;
 
 					case Ak::up_left: { 
 						if (m.from.l > 0 && m.from.c > 0) {
 							m.to.l = m.from.l - 1;
 							m.to.c = m.from.c - 1;
-							inputValide = true;
+							if (damier[m.to.l][m.to.c] != CV) {
+								inputValide = true;
+							}
 						}
 					} break;
 
@@ -341,7 +368,9 @@ int main() {
 						if ((m.from.l > 0) && (m.from.c < COL - 1)) {
 							m.to.l = m.from.l - 1;
 							m.to.c = m.from.c + 1;
-							inputValide = true;
+							if (damier[m.to.l][m.to.c] != CV) {
+								inputValide = true;
+							}
 						}
 					} break;
 
@@ -349,7 +378,9 @@ int main() {
 						if ((m.from.l < LIG - 1) && (m.from.c > 0)) {
 							m.to.l = m.from.l + 1;
 							m.to.c = m.from.c - 1;
-							inputValide = true;
+							if (damier[m.to.l][m.to.c] != CV) {
+								inputValide = true;
+							}
 						}
 					} break;
 
@@ -357,13 +388,15 @@ int main() {
 						if (!(m.from.l < LIG - 1 && m.from.c < COL - 1)) {
 							m.to.l = m.from.l + 1;
 							m.to.c = m.from.c + 1;
-							inputValide = true;
+							if (damier[m.to.l][m.to.c] != CV) {
+								inputValide = true;
+							}
 						}
 					} break;
 				}
 			}
 			// fonction prendrait un Case damier[][] et un move
-			// l'acces au damier est circonscrit par inputValide
+			// la modification du damier est circonscrit par inputValide
 
 			if (inputValide) {				                         // ce que l'on fait avec chaque type de case darrivee		
 				switch (damier[m.to.l][m.to.c]) {
@@ -378,10 +411,10 @@ int main() {
 						deplacements++;
 					} break;
 
-					case CV: {										// la case est vide, le déplacement est annulé
-						m.to.l = m.from.l;
-						m.to.c = m.from.c;
-					} break;
+					//case CV: {										// la case est vide, le déplacement est annulé
+					//	m.to.l = m.from.l;
+					//	m.to.c = m.from.c;
+					//} break;
 				}
 
 				// function prendrait un Case damier[][] et un Move
@@ -417,7 +450,11 @@ int main() {
 					running = false;
 					break;
 				}
+				Case from = damier[m.from.l][m.from.c];
+				Case to = damier[m.to.l][m.to.c];
+				XY n = { 0,0 };
 				peindre_move(m);
+				peindre_dollars(dollars);
 				m.from = m.to;
 			}
 		}
@@ -458,7 +495,7 @@ int main() {
 
 // -TESTS GRAPHIQUES
 // peindre une case, de toutes les sortes de enum Case et des formats (3*6, 3*7, 4*6, 4*7) nombres paires et impairs de cases
-// peindre un damier 
+// peindre un damier :w
 
 // Conseil Debuggage
 // 1- toujours garder un breakpoint avant le return du main pour analyser letat des variables sans devoir reproduire le bug
